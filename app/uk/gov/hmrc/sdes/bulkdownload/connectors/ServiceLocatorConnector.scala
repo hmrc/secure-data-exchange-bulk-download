@@ -20,10 +20,10 @@ import javax.inject.{Inject, Singleton}
 import play.api.Logger
 import play.api.http.ContentTypes.JSON
 import play.api.http.HeaderNames.CONTENT_TYPE
+import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.sdes.bulkdownload.config.SdesServicesConfig
-import uk.gov.hmrc.sdes.bulkdownload.domain.Registration
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -53,4 +53,10 @@ class ServiceLocatorConnector @Inject()(servicesConfig: SdesServicesConfig, http
     }
   }
 
+}
+
+case class Registration(serviceName: String, serviceUrl: String, metadata: Option[Map[String, String]] = None)
+
+object Registration {
+  implicit val format: OFormat[Registration] = Json.format[Registration]
 }

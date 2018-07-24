@@ -25,7 +25,6 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.sdes.bulkdownload.config.SdesServicesConfig
-import uk.gov.hmrc.sdes.bulkdownload.domain.Registration
 
 import scala.concurrent.Future
 
