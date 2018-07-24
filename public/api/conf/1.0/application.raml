@@ -1,0 +1,44 @@
+#%RAML 1.0
+---
+title: SDES Available Files
+version: 1.0
+
+protocols: [ HTTPS ]
+baseUri: https://api.service.hmrc.gov.uk/
+
+documentation:
+ - title: Overview
+   content: !include docs/overview.md
+ - title: Versioning
+   content: !include https://developer.service.hmrc.gov.uk/api-documentation/assets/common/docs/versioning.md
+ - title: Errors
+   content: !include https://developer.service.hmrc.gov.uk/api-documentation/assets/common/docs/errors.md
+
+mediaType: application/hal+json
+
+uses:
+  sec: https://developer.service.hmrc.gov.uk/api-documentation/assets/common/modules/securitySchemes.raml
+  headers: https://developer.service.hmrc.gov.uk/api-documentation/assets/common/modules/headers.raml
+  annotations: https://developer.service.hmrc.gov.uk/api-documentation/assets/common/modules/annotations.raml
+  types: https://developer.service.hmrc.gov.uk/api-documentation/assets/common/modules/types.raml
+
+/bulk-data-download:
+  /list/{fileType}:
+    uriParameters:
+      fileType:
+        description: A type of the information files to download e.g. `TARIFF-DAILY`, `TARIFF-MONTHLY`, `TARIFF-ANNUAL`.
+        type: string
+    get:
+      displayName: List available files
+      description: |
+        List the files of the given type that are available for download from SDES.
+      is: [headers.acceptHeader]
+      securedBy: [ sec.x-application ]
+      responses:
+        200:
+          body:
+            application/json:
+              example: |
+                [
+                  { "filename": "xyz.xml.gz", "downloadURL": "https://some.sdes.domain?token=abc123", "fileSize": 1234 }
+                ]
