@@ -1,0 +1,24 @@
+{
+  "scopes": [
+    {
+      "key": "read:bulk-data-download-list",
+      "name": "List Available Files",
+      "description": "List files available for download from SDES"
+    }
+  ],
+  "api": {
+    "name": "SDES Bulk Data Download",
+    "description": "An API informing about files available for download from Secure Data Exchange Services.",
+    "context": "bulk-data-download",
+    "versions": [
+      {
+        "version": "1.0",
+        "status": "BETA",
+        "access": {
+          "type": "PUBLIC"
+        },
+        "endpointsEnabled": true
+      }
+    ]
+  }
+}
