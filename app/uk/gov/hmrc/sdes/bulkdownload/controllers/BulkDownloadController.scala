@@ -16,13 +16,45 @@
 
 package uk.gov.hmrc.sdes.bulkdownload.controllers
 
-import javax.inject.Singleton
+import javax.inject.{Inject, Singleton}
+import play.api.Logger
+import play.api.libs.json.Json
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.controller.BaseController
+import uk.gov.hmrc.sdes.bulkdownload.connectors.SdesListFilesConnector
+
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+import scala.util.control.NonFatal
 
 @Singleton()
-class BulkDownloadController extends BaseController {
+class BulkDownloadController @Inject()(sdesListFilesConnector: SdesListFilesConnector) extends BaseController {
 
-	def list(fileType: String): Action[AnyContent] = TODO
+	def list(fileType: String): Action[AnyContent] = HavingClientIdHeader.async { implicit request =>
+		sdesListFilesConnector.listAvailableFiles(fileType) map {
+			case Nil => NotFound
+			case nonEmptyList => Ok(Json.toJson(nonEmptyList))
+		} recover {
+			case bre: uk.gov.hmrc.http.BadRequestException =>
+				Logger.warn(s"BadRequest received when listing available files for $fileType: $bre")
+				BadRequest
+			case NonFatal(e) =>
+				Logger.error(s"Could not list available files for $fileType: $e", e)
+				InternalServerError
+		}
+	}
+
+  private object HavingClientIdHeader extends ActionBuilder[Request] with ActionFilter[Request] {
+    val clientIdHeaderName = "X-Client-ID"
+
+    override protected def filter[A](request: Request[A]): Future[Option[Result]] = {
+      val maybeError = request.headers.get(clientIdHeaderName) match {
+        case None => Some(Unauthorized)
+        case Some(empty) if empty.trim.isEmpty => Some(Unauthorized)
+        case _ => None
+      }
+      Future.successful(maybeError)
+		}
+	}
 
 }
