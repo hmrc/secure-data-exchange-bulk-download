@@ -30,19 +30,19 @@ import scala.util.control.NonFatal
 @Singleton()
 class BulkDownloadController @Inject()(sdesListFilesConnector: SdesListFilesConnector) extends BaseController {
 
-	def list(fileType: String): Action[AnyContent] = HavingClientIdHeader.async { implicit request =>
-		sdesListFilesConnector.listAvailableFiles(fileType) map {
-			case Nil => NotFound
-			case nonEmptyList => Ok(Json.toJson(nonEmptyList))
-		} recover {
-			case bre: uk.gov.hmrc.http.BadRequestException =>
-				Logger.warn(s"BadRequest received when listing available files for $fileType: $bre")
-				BadRequest
-			case NonFatal(e) =>
-				Logger.error(s"Could not list available files for $fileType: $e", e)
-				InternalServerError
-		}
-	}
+  def list(fileType: String): Action[AnyContent] = HavingClientIdHeader.async { implicit request =>
+    sdesListFilesConnector.listAvailableFiles(fileType) map {
+      case Nil => NotFound
+      case nonEmptyList => Ok(Json.toJson(nonEmptyList))
+    } recover {
+      case bre: uk.gov.hmrc.http.BadRequestException =>
+        Logger.warn(s"BadRequest received when listing available files for $fileType: $bre")
+        BadRequest
+      case NonFatal(e) =>
+        Logger.error(s"Could not list available files for $fileType: $e", e)
+        InternalServerError
+    }
+  }
 
   private object HavingClientIdHeader extends ActionBuilder[Request] with ActionFilter[Request] {
     val clientIdHeaderName = "X-Client-ID"
@@ -54,7 +54,7 @@ class BulkDownloadController @Inject()(sdesListFilesConnector: SdesListFilesConn
         case _ => None
       }
       Future.successful(maybeError)
-		}
-	}
+    }
+  }
 
 }
