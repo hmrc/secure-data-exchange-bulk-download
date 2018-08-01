@@ -31,6 +31,7 @@ import scala.util.control.NonFatal
 class BulkDownloadController @Inject()(sdesListFilesConnector: SdesListFilesConnector) extends BaseController {
 
   def list(fileType: String): Action[AnyContent] = HavingClientIdHeader.async { implicit request =>
+    Logger.debug(s"request headers from /list: ${request.headers.toSimpleMap}")
     sdesListFilesConnector.listAvailableFiles(fileType) map {
       case Nil => NotFound
       case nonEmptyList => Ok(Json.toJson(nonEmptyList))
