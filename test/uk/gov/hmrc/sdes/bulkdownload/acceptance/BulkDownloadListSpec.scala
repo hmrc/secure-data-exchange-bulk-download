@@ -32,7 +32,6 @@ class BulkDownloadListSpec extends PlaySpec with GuiceOneAppPerSuite with WireMo
   override implicit lazy val app: Application = GuiceApplicationBuilder()
     .configure("microservice.services.service-locator.enabled" -> false,
       "auditing.enabled" -> false,
-      "internalServiceHostPatterns" -> Seq(TestUtils.host),
       "microservice.services.sdes-list-files.host" -> TestUtils.host,
       "microservice.services.sdes-list-files.port" -> TestUtils.port)
     .build()
@@ -58,9 +57,19 @@ class BulkDownloadListSpec extends PlaySpec with GuiceOneAppPerSuite with WireMo
         contentAsJson(result) mustBe expectedResponse
         verifySdesProxyListFilesCalled(fileType, clientId)
       }
+
+      "recognise incoming ClientId header in a case insensitive manner and pass it downstream" in {
+        stubSdesProxyListFilesEndpoint(fileType)
+
+        val request = FakeRequest(Helpers.GET, endpoint).withHeaders(invertLettersCase(headerNameClientId) -> clientId)
+        val Some(result) = route(app, request)
+
+        status(result) mustBe OK
+        verifySdesProxyListFilesCalled(fileType, clientId)
+      }
     }
 
-    "no files are found i.e. SDES proxy returns empty array" should {
+    "no files are found i.e. SDES proxy returns an empty array" should {
       "respond with 404 NotFound" in {
         stubSdesProxyListFilesEndpoint(fileType, responseBody = Json.stringify(JsArray()))
 
@@ -70,13 +79,21 @@ class BulkDownloadListSpec extends PlaySpec with GuiceOneAppPerSuite with WireMo
       }
     }
 
-    "SDES proxy responds with 400 BadRequest" should {
-      "respond with 400 BadRequest too" in {
-        stubSdesProxyListFilesEndpoint(fileType, status = BAD_REQUEST, responseBody = "")
+    "SDES proxy responds with 400 BAD_REQUEST" should {
+      "respond with 400 BAD_REQUEST too" in {
+        verifyErroneousProxyResponseStatusPropagated(BAD_REQUEST)
+      }
+    }
 
-        val Some(result) = route(app, validRequest)
+    "SDES proxy responds with 401 UNAUTHORIZED" should {
+      "respond with 401 UNAUTHORIZED too" in {
+        verifyErroneousProxyResponseStatusPropagated(UNAUTHORIZED)
+      }
+    }
 
-        status(result) mustBe BAD_REQUEST
+    "SDES proxy responds with 403 FORBIDDEN" should {
+      "respond with 403 FORBIDDEN too" in {
+        verifyErroneousProxyResponseStatusPropagated(FORBIDDEN)
       }
     }
 
@@ -98,4 +115,15 @@ class BulkDownloadListSpec extends PlaySpec with GuiceOneAppPerSuite with WireMo
       }
     }
   }
+
+  private def verifyErroneousProxyResponseStatusPropagated(statusCode: Int) = {
+    stubSdesProxyListFilesEndpoint(fileType, statusCode, responseBody = "")
+
+    val Some(result) = route(app, validRequest)
+
+    status(result) mustBe statusCode
+  }
+
+  private def invertLettersCase(s: String): String =
+    for (c <- s) yield if (c.isLower) c.toUpper else c.toLower
 }

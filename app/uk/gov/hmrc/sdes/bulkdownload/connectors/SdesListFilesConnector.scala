@@ -23,8 +23,8 @@ import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.sdes.bulkdownload.config.SdesServicesConfig
 import uk.gov.hmrc.sdes.bulkdownload.model.FileItem
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 @Singleton
 class SdesListFilesConnector @Inject()(servicesConfig: SdesServicesConfig, http: HttpClient) {
@@ -41,8 +41,6 @@ class SdesListFilesConnector @Inject()(servicesConfig: SdesServicesConfig, http:
   def listAvailableFiles(fileType: String)(implicit hc: HeaderCarrier): Future[List[FileItem]] = {
     Logger.debug(s"HeaderCarrier headers from listAvailableFiles: ${hc.headers}")
     Logger.debug(s"HeaderCarrier other headers from listAvailableFiles: ${hc.otherHeaders}")
-    Logger.debug(s"hasPathOrNull internalServiceHostPatterns - ${servicesConfig.runModeConfiguration.underlying.hasPathOrNull("internalServiceHostPatterns")}")
-    Logger.debug(s"servicesConfig internalServiceHostPatterns - ${servicesConfig.runModeConfiguration.getStringList("internalServiceHostPatterns")}")
     val url = s"$serviceUrl/$fileType"
     http.GET[List[FileItem]](url)
   }
