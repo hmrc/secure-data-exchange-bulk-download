@@ -47,12 +47,12 @@ class MDTPEndpointsSpec extends PlaySpec with GuiceOneAppPerSuite {
 
   "RAML documentation endpoint" should {
     "respond with requested raml documentation" in {
-      val req = FakeRequest(Helpers.GET, "/api/conf/1.0/application.raml")
+      val req = FakeRequest(Helpers.GET, "/api/conf/1.1/application.raml")
 
       val Some(result) = route(app, req)
 
       status(result) mustBe OK
-      contentAsString(result) mustBe readResourceFile("/public/api/conf/1.0/application.raml")
+      contentAsString(result) mustBe readResourceFile("/public/api/conf/1.1/application.raml")
     }
   }
 

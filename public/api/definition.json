@@ -12,7 +12,7 @@
     "context": "bulk-data-download",
     "versions": [
       {
-        "version": "1.0",
+        "version": "1.1",
         "status": "BETA",
         "access": {
           "type": "PUBLIC"
