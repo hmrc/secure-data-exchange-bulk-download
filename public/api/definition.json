@@ -7,9 +7,9 @@
     }
   ],
   "api": {
-    "name": "Bulk Data Download",
+    "name": "Bulk Data File List",
     "description": "An API informing about files available for download from Secure Data Exchange Services.",
-    "context": "bulk-data-download",
+    "context": "bulk-data-file-list",
     "versions": [
       {
         "version": "1.0",

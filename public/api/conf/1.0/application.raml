@@ -1,6 +1,6 @@
 #%RAML 1.0
 ---
-title: Bulk Data Download
+title: Bulk Data File List
 version: 1.0
 
 protocols: [ HTTPS ]
@@ -34,7 +34,7 @@ uses:
     get:
       displayName: List available files
       description: |
-        List the files of the given type that are available for download from SDES.
+        List the files of the given type that are available for download.
       is: [headers.acceptHeader]
       securedBy: [ sec.x-application ]
       responses:
