@@ -69,6 +69,14 @@ class BulkDownloadListSpec extends PlaySpec with GuiceOneAppPerSuite with WireMo
       }
     }
 
+    "Invalid POST Request" should {
+      "respond with 405 MethodNotAllowed" in {
+        val Some(result) = route(app, FakeRequest(Helpers.POST, endpoint))
+        status(result) mustBe METHOD_NOT_ALLOWED
+      }
+    }
+
+
     "no files are found i.e. SDES proxy returns an empty array" should {
       "respond with 404 NotFound" in {
         stubSdesProxyListFilesEndpoint(fileType, responseBody = Json.stringify(JsArray()))
