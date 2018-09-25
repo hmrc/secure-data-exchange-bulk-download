@@ -60,6 +60,11 @@ class BulkDownloadControllerSpec extends UnitSpec with MockitoSugar {
       status(result) shouldBe Status.INTERNAL_SERVER_ERROR
     }
 
+    "return 405(MethodNotAllowed) when trying to post to endpoint" in {
+      val controller = new BulkDownloadController(mock[SdesListFilesConnector])
+      status(await(controller.methodNotAllowed("")(FakeRequest()))) shouldBe Status.METHOD_NOT_ALLOWED
+    }
+
   }
 
 }

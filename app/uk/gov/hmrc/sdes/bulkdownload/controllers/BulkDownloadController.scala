@@ -33,6 +33,8 @@ class BulkDownloadController @Inject()(sdesListFilesConnector: SdesListFilesConn
 
   private lazy val emptyHc = HeaderCarrier()
 
+  def methodNotAllowed(fileType: String): Action[AnyContent] = Action { implicit request =>  MethodNotAllowed }
+
   def list(fileType: String): Action[AnyContent] = HavingClientIdHeader.async { implicit request =>
     val (hc, maybeClientId) = headerCarrierWithClientId
     lazy val clientId: String = maybeClientId.fold(ifEmpty = "N/A")(identity)
