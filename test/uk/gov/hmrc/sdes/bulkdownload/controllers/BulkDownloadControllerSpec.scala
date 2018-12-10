@@ -26,6 +26,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.sdes.bulkdownload.connectors.SdesListFilesConnector
 
+import scala.concurrent.ExecutionContext.global
 import scala.concurrent.Future
 
 
@@ -34,7 +35,7 @@ class BulkDownloadControllerSpec extends UnitSpec with MockitoSugar {
   private trait Setup {
     val mockSdesListFilesConnector: SdesListFilesConnector = mock[SdesListFilesConnector]
 
-    val controller = new BulkDownloadController(mockSdesListFilesConnector)
+    val controller = new BulkDownloadController(mockSdesListFilesConnector)(global)
 
     val fileType = "FILE_TYPE"
     val validRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withHeaders("X-Client-ID" -> "someId")
@@ -60,8 +61,7 @@ class BulkDownloadControllerSpec extends UnitSpec with MockitoSugar {
       status(result) shouldBe Status.INTERNAL_SERVER_ERROR
     }
 
-    "return 405(MethodNotAllowed) when trying to post to endpoint" in {
-      val controller = new BulkDownloadController(mock[SdesListFilesConnector])
+    "return 405(MethodNotAllowed) when trying to post to endpoint" in new Setup {
       status(await(controller.methodNotAllowed("")(FakeRequest()))) shouldBe Status.METHOD_NOT_ALLOWED
     }
 

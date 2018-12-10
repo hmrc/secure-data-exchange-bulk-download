@@ -25,11 +25,12 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.sdes.bulkdownload.config.SdesServicesConfig
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 
 @Singleton
-class ServiceLocatorConnector @Inject()(servicesConfig: SdesServicesConfig, http: HttpClient) {
+class ServiceLocatorConnector @Inject()(servicesConfig: SdesServicesConfig, http: HttpClient)
+                                       (implicit ec: ExecutionContext) {
 
   protected lazy val appName: String = servicesConfig.getString("appName")
   protected lazy val appUrl: String = servicesConfig.getString("appUrl")
