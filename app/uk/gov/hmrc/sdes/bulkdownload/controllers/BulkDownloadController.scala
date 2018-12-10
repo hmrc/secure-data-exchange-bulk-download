@@ -24,12 +24,13 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.BaseController
 import uk.gov.hmrc.sdes.bulkdownload.connectors.SdesListFilesConnector
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 import scala.util.control.NonFatal
 
 @Singleton()
-class BulkDownloadController @Inject()(sdesListFilesConnector: SdesListFilesConnector) extends BaseController {
+class BulkDownloadController @Inject()(sdesListFilesConnector: SdesListFilesConnector)
+                                      (implicit ec: ExecutionContext) extends BaseController {
 
   private lazy val emptyHc = HeaderCarrier()
 

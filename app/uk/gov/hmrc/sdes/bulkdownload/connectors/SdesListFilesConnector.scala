@@ -23,11 +23,12 @@ import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.sdes.bulkdownload.config.SdesServicesConfig
 import uk.gov.hmrc.sdes.bulkdownload.model.FileItem
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 
 @Singleton
-class SdesListFilesConnector @Inject()(servicesConfig: SdesServicesConfig, http: HttpClient) {
+class SdesListFilesConnector @Inject()(servicesConfig: SdesServicesConfig, http: HttpClient)
+                                      (implicit ec: ExecutionContext) {
 
   lazy val serviceUrl: String = {
     val serviceKey = "sdes-list-files"

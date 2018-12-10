@@ -26,6 +26,7 @@ import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.sdes.bulkdownload.config.SdesServicesConfig
 
+import scala.concurrent.ExecutionContext.global
 import scala.concurrent.Future
 
 class ServiceLocatorConnectorSpec extends UnitSpec with MockitoSugar {
@@ -37,7 +38,7 @@ class ServiceLocatorConnectorSpec extends UnitSpec with MockitoSugar {
     val mockServicesConfig: SdesServicesConfig = mock[SdesServicesConfig]
     val mockHttp: HttpClient = mock[HttpClient]
 
-    val connector = new ServiceLocatorConnector(mockServicesConfig, mockHttp)
+    val connector = new ServiceLocatorConnector(mockServicesConfig, mockHttp)(global)
 
     val serviceLocatorUrl = "https://SERVICE_LOCATOR"
     val appName = "api-microservice"
