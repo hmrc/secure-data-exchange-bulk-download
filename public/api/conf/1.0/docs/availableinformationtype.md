@@ -15,7 +15,7 @@
      <tr>
        <td>TARIFF-MONTHLY</td>
        <td>Monthly Tariff & Quota Data</td>
-       <td>Updated on the 2nd data of the month at 12:05am</td>
+       <td>Updated on the 2nd day of the month at 12:05am</td>
      </tr>
 
      <tr>
