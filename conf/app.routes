@@ -4,6 +4,6 @@ GET        /list/:fileType             uk.gov.hmrc.sdes.bulkdownload.controllers
 
 POST       /list/:fileType             uk.gov.hmrc.sdes.bulkdownload.controllers.BulkDownloadController.methodNotAllowed(fileType)
 
-GET        /api/definition             @controllers.Assets.at(path="/public/api", file="definition.json")
+GET        /api/definition             @uk.gov.hmrc.sdes.bulkdownload.controllers.ApiDocumentationController.definition()
 
 GET        /api/conf/*file             @controllers.Assets.at(path="/public/api/conf", file)

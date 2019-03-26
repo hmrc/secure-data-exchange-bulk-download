@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,12 +22,15 @@ import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers._
 import play.api.test.{FakeRequest, Helpers}
+import uk.gov.hmrc.sdes.bulkdownload.utils.TestData
+import uk.gov.hmrc.sdes.bulkdownload.utils.TestData.applicationIds
 
 import scala.io.Source
 
 class MDTPEndpointsSpec extends PlaySpec with GuiceOneAppPerSuite {
 
   override implicit lazy val app: Application = GuiceApplicationBuilder()
+    .configure(applicationIds.zipWithIndex.map { case (id, i) => s"api.access.white-list.applicationIds.$i" -> id }: _*)
     .configure("microservice.services.service-locator.enabled" -> false,
       "auditing.enabled" -> false)
     .build()
@@ -41,7 +44,7 @@ class MDTPEndpointsSpec extends PlaySpec with GuiceOneAppPerSuite {
       val Some(result) = route(app, req)
 
       status(result) mustBe OK
-      contentAsString(result) mustBe readResourceFile("/public/api/definition.json")
+      contentAsJson(result) mustBe TestData.expectedDefinitionJson(applicationIds)
     }
   }
 

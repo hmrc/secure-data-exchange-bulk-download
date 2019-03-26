@@ -14,10 +14,20 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.sdes.bulkdownload.utils
+package uk.gov.hmrc.sdes.bulkdownload.controllers
 
-object TestUtils {
-  val host = "localhost"
-  val port: Int = scala.util.Properties.envOrElse("MOCK_SERVER_PORT", "1234").toInt
-  val url = s"http://$host:$port"
+import javax.inject.{Inject, Singleton}
+import play.api.http.ContentTypes
+import play.api.mvc.{Action, AnyContent}
+import uk.gov.hmrc.play.bootstrap.controller.BaseController
+import uk.gov.hmrc.sdes.bulkdownload.config.SdesServicesConfig
+import uk.gov.hmrc.sdes.bulkdownload.views
+
+@Singleton
+class ApiDocumentationController @Inject()(servicesConfig: SdesServicesConfig) extends BaseController {
+
+  def definition(): Action[AnyContent] = Action {
+    Ok(views.txt.definition(servicesConfig.apiAccessWhitelistedApplicationIds)).as(ContentTypes.JSON)
+  }
+
 }

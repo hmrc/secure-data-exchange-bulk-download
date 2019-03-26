@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,4 +25,7 @@ import uk.gov.hmrc.play.config.ServicesConfig
 class SdesServicesConfig @Inject()(override val runModeConfiguration: Configuration,
                                    environment: Environment) extends ServicesConfig {
   override protected def mode: Mode = environment.mode
+
+  val apiAccessWhitelistedApplicationIds: Seq[String] =
+    runModeConfiguration.getStringSeq("api.access.white-list.applicationIds").getOrElse(Nil)
 }

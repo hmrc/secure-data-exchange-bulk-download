@@ -1,3 +1,4 @@
+@(whitelistedApplicationIds: Seq[String])
 {
   "scopes": [
     {
@@ -15,7 +16,8 @@
         "version": "1.0",
         "status": "BETA",
         "access": {
-          "type": "PUBLIC"
+          "type": "PRIVATE",
+          "whitelistedApplicationIds": @{play.api.libs.json.Json.toJson(whitelistedApplicationIds)}
         },
         "endpointsEnabled": true
       }
