@@ -39,21 +39,39 @@ class SdesServicesConfigSpec extends UnitSpec with MockitoSugar {
     }
   }
 
-  "SdesServicesConfigSpec" should {
-    "read whitelisted application ids from config" in new Setup {
-      override val configFileContent =
-        s"""
-           |api.access.white-list.applicationIds.0 = $id1
-           |api.access.white-list.applicationIds.1 = $id2
-           |api.access.white-list.applicationIds.2 = $id3
+  "SdesServicesConfigSpec" when {
+
+    "reading whitelisted application ids from config" should {
+      "read configured values" in new Setup {
+        override val configFileContent =
+          s"""
+             |api.access.white-list.applicationIds.0 = $id1
+             |api.access.white-list.applicationIds.1 = $id2
+             |api.access.white-list.applicationIds.2 = $id3
         """.stripMargin
 
-      servicesConfig.apiAccessWhitelistedApplicationIds shouldBe applicationIds
+        servicesConfig.apiAccessWhitelistedApplicationIds shouldBe applicationIds
+      }
+
+      "by default give an empty list when ids aren't configured" in new Setup {
+        override val configFileContent = ""
+        servicesConfig.apiAccessWhitelistedApplicationIds shouldBe Nil
+      }
     }
 
-    "give empty list if whitelisted application ids not configured" in new Setup {
-      override val configFileContent = ""
-      servicesConfig.apiAccessWhitelistedApplicationIds shouldBe Nil
+    "reading api access type from config" should {
+      "read a configured value" in new Setup {
+        val accessType = "SOME_ACCESS_TYPE"
+        override val configFileContent = s"api.access.type = $accessType"
+
+        servicesConfig.apiAccessType shouldBe accessType
+      }
+
+      "by default give PRIVATE when access type is not configured" in new Setup {
+        override val configFileContent = ""
+
+        servicesConfig.apiAccessType shouldBe ApiAccessTypes.PRIVATE
+      }
     }
   }
 

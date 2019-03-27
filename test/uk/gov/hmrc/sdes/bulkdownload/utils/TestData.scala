@@ -22,7 +22,8 @@ object TestData {
 
   val applicationIds @ Seq(id1, id2, id3) = Seq("id1", "id2", "id3")
 
-  def expectedDefinitionJson(whitelistedApplicationIds: Seq[String] = applicationIds): JsValue = Json.parse(
+  def expectedDefinitionJson(apiAccessType: String = ApiAccessTypes.PRIVATE,
+                             whitelistedAppIds: Seq[String] = applicationIds): JsValue = Json.parse(
     s"""
        |{
        |  "scopes": [
@@ -41,8 +42,8 @@ object TestData {
        |        "version": "1.0",
        |        "status": "BETA",
        |        "access": {
-       |          "type": "PRIVATE",
-       |          "whitelistedApplicationIds":[ ${whitelistedApplicationIds.map(Json.toJson(_)).mkString(",")} ]
+       |          "type": "$apiAccessType",
+       |          "whitelistedApplicationIds":[ ${whitelistedAppIds.map(Json.toJson(_)).mkString(",")} ]
        |        },
        |        "endpointsEnabled": true
        |      }
@@ -51,5 +52,10 @@ object TestData {
        |}
          """.stripMargin
   )
+
+  object ApiAccessTypes {
+    val PRIVATE = "PRIVATE"
+    val PUBLIC = "PUBLIC"
+  }
 
 }

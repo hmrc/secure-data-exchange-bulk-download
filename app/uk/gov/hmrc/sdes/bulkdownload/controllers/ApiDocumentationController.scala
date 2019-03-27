@@ -27,7 +27,8 @@ import uk.gov.hmrc.sdes.bulkdownload.views
 class ApiDocumentationController @Inject()(servicesConfig: SdesServicesConfig) extends BaseController {
 
   def definition(): Action[AnyContent] = Action {
-    Ok(views.txt.definition(servicesConfig.apiAccessWhitelistedApplicationIds)).as(ContentTypes.JSON)
+    Ok(views.txt.definition(servicesConfig.apiAccessType,
+      servicesConfig.apiAccessWhitelistedApplicationIds)).as(ContentTypes.JSON)
   }
 
 }

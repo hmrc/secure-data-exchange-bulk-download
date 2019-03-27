@@ -23,7 +23,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers._
 import play.api.test.{FakeRequest, Helpers}
 import uk.gov.hmrc.sdes.bulkdownload.utils.TestData
-import uk.gov.hmrc.sdes.bulkdownload.utils.TestData.applicationIds
+import uk.gov.hmrc.sdes.bulkdownload.utils.TestData.{ApiAccessTypes, applicationIds}
 
 import scala.io.Source
 
@@ -44,7 +44,7 @@ class MDTPEndpointsSpec extends PlaySpec with GuiceOneAppPerSuite {
       val Some(result) = route(app, req)
 
       status(result) mustBe OK
-      contentAsJson(result) mustBe TestData.expectedDefinitionJson(applicationIds)
+      contentAsJson(result) mustBe TestData.expectedDefinitionJson(ApiAccessTypes.PRIVATE, applicationIds)
     }
   }
 
