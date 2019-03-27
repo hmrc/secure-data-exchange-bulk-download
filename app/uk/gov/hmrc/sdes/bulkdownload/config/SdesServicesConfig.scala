@@ -26,6 +26,8 @@ class SdesServicesConfig @Inject()(override val runModeConfiguration: Configurat
                                    environment: Environment) extends ServicesConfig {
   override protected def mode: Mode = environment.mode
 
+  val apiAccessType: String = runModeConfiguration.getString("api.access.type").getOrElse("PRIVATE")
+
   val apiAccessWhitelistedApplicationIds: Seq[String] =
     runModeConfiguration.getStringSeq("api.access.white-list.applicationIds").getOrElse(Nil)
 }

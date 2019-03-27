@@ -28,17 +28,18 @@ import uk.gov.hmrc.sdes.bulkdownload.utils.TestData._
 class ApiDocumentationControllerSpec extends UnitSpec with MockitoSugar {
 
   "ApiDocumentationController" should {
-    "render definition.json with whitelisted application ids" in {
+    "render definition.json with access type and whitelisted application ids" in {
       val mockConfig = mock[SdesServicesConfig]
       val controller = new ApiDocumentationController(mockConfig)
 
+      when(mockConfig.apiAccessType).thenReturn(ApiAccessTypes.PUBLIC)
       when(mockConfig.apiAccessWhitelistedApplicationIds).thenReturn(applicationIds)
 
       val result = controller.definition()(FakeRequest())
 
       status(result) shouldBe OK
       contentType(result) shouldBe Some(ContentTypes.JSON)
-      contentAsJson(result) shouldBe expectedDefinitionJson(applicationIds)
+      contentAsJson(result) shouldBe expectedDefinitionJson(ApiAccessTypes.PUBLIC, applicationIds)
 
     }
   }
