@@ -10,18 +10,18 @@
      <tr>
         <td>TARIFF-DAILY</td>
         <td>Daily Tariff & Quota Data</td>
-        <td>Updated daily at 12:05am</td>
+        <td>Update available daily from midnight(Scheduler updates every 4 hours)</td>
      </tr>
      <tr>
        <td>TARIFF-MONTHLY</td>
        <td>Monthly Tariff & Quota Data</td>
-       <td>Updated on the 2nd day of the month at 12:05am</td>
+       <td>Update available on the 2nd day of the month</td>
      </tr>
 
      <tr>
         <td>TARIFF-ANNUAL</td>
         <td>Annual Tariff & Quota Data</td>
-        <td>Updated on 1st day of year at 04:00am</td>
+        <td>Update available on the 2nd day of the year</td>
      </tr>
    </tbody>
 </table>
