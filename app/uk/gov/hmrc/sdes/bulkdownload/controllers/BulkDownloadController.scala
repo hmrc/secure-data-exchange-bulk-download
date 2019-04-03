@@ -42,7 +42,7 @@ class BulkDownloadController @Inject()(sdesListFilesConnector: SdesListFilesConn
     Logger.debug(s"request headers from /list: ${request.headers.toSimpleMap}")
     Logger.debug(s"HeaderCarrier headers from /list: ${hc.headers}")
     sdesListFilesConnector.listAvailableFiles(fileType)(hc) map {
-      case Nil => NotFound
+      case Nil => Ok
       case nonEmptyList => Ok(Json.toJson(nonEmptyList))
     } recover {
       case bre: uk.gov.hmrc.http.BadRequestException =>
