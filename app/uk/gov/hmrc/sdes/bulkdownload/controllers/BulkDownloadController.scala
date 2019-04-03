@@ -42,8 +42,7 @@ class BulkDownloadController @Inject()(sdesListFilesConnector: SdesListFilesConn
     Logger.debug(s"request headers from /list: ${request.headers.toSimpleMap}")
     Logger.debug(s"HeaderCarrier headers from /list: ${hc.headers}")
     sdesListFilesConnector.listAvailableFiles(fileType)(hc) map {
-      case Nil => Ok(JsArray())
-      case nonEmptyList => Ok(Json.toJson(nonEmptyList))
+      files => Ok(Json.toJson(files))
     } recover {
       case bre: uk.gov.hmrc.http.BadRequestException =>
         Logger.error(s"Status BadRequest received when listing available files of type $fileType with client id $clientId: $bre")

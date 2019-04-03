@@ -78,7 +78,7 @@ class BulkDownloadListSpec extends PlaySpec with GuiceOneAppPerSuite with WireMo
 
 
     "no files are found i.e. SDES proxy returns an empty array" should {
-      "respond with 200 OK with empty content" in {
+      "respond with 200 OK with empty list" in {
         stubSdesProxyListFilesEndpoint(fileType, responseBody = Json.stringify(JsArray()))
 
         val Some(result) = route(app, validRequest)
