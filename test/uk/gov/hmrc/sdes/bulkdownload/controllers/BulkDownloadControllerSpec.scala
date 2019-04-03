@@ -25,6 +25,7 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.sdes.bulkdownload.connectors.SdesListFilesConnector
+import uk.gov.hmrc.sdes.bulkdownload.model.FileItem
 
 import scala.concurrent.ExecutionContext.global
 import scala.concurrent.Future
@@ -44,11 +45,22 @@ class BulkDownloadControllerSpec extends UnitSpec with MockitoSugar {
   }
 
   "BulkDownloadController" should {
-    "call connector with the given fileType" in new Setup {
+    "call connector with the given fileType when data not found" in new Setup {
       when(mockSdesListFilesConnector.listAvailableFiles(any[String])(any[HeaderCarrier]))
         .thenReturn(Future.successful(Nil))
 
-      await(controller.list(fileType)(validRequest))
+      private val result = await(controller.list(fileType)(validRequest))
+      status(result) shouldBe Status.NOT_FOUND
+
+      verify(mockSdesListFilesConnector).listAvailableFiles(meq(fileType))(any[HeaderCarrier])
+    }
+
+    "call connector with the given fileType" in new Setup {
+      when(mockSdesListFilesConnector.listAvailableFiles(any[String])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(List(FileItem("name", "Url", 10))))
+
+      private val result = await(controller.list(fileType)(validRequest))
+      status(result) shouldBe Status.OK
 
       verify(mockSdesListFilesConnector).listAvailableFiles(meq(fileType))(any[HeaderCarrier])
     }
