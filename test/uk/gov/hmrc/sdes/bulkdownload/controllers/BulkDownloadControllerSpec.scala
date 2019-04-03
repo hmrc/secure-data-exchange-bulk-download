@@ -20,11 +20,14 @@ import org.mockito.Matchers.{eq => meq, _}
 import org.mockito.Mockito.{verify, when}
 import org.scalatest.mockito.MockitoSugar
 import play.api.http.Status
+import play.api.libs.json.{JsArray, Json}
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
+import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.sdes.bulkdownload.connectors.SdesListFilesConnector
+import uk.gov.hmrc.sdes.bulkdownload.model.FileItem
 
 import scala.concurrent.ExecutionContext.global
 import scala.concurrent.Future
@@ -44,11 +47,26 @@ class BulkDownloadControllerSpec extends UnitSpec with MockitoSugar {
   }
 
   "BulkDownloadController" should {
-    "call connector with the given fileType" in new Setup {
+    "return a successful response OK when listAvailableFiles is empty" in new Setup {
       when(mockSdesListFilesConnector.listAvailableFiles(any[String])(any[HeaderCarrier]))
         .thenReturn(Future.successful(Nil))
 
-      await(controller.list(fileType)(validRequest))
+      private val result = await(controller.list(fileType)(validRequest))
+      status(result) shouldBe Status.OK
+      contentAsJson(result) shouldBe JsArray()
+
+      verify(mockSdesListFilesConnector).listAvailableFiles(meq(fileType))(any[HeaderCarrier])
+    }
+
+    "return successful ok response with json data when listAvailableFiles returns valid data" in new Setup {
+      val fileItems = List(FileItem("name", "Url", 10))
+
+      when(mockSdesListFilesConnector.listAvailableFiles(any[String])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(fileItems))
+
+      private val result = await(controller.list(fileType)(validRequest))
+      status(result) shouldBe Status.OK
+      contentAsJson(result) shouldBe Json.toJson(fileItems)
 
       verify(mockSdesListFilesConnector).listAvailableFiles(meq(fileType))(any[HeaderCarrier])
     }
