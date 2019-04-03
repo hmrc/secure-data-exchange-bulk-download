@@ -18,7 +18,7 @@ package uk.gov.hmrc.sdes.bulkdownload.controllers
 
 import javax.inject.{Inject, Singleton}
 import play.api.Logger
-import play.api.libs.json.Json
+import play.api.libs.json.{JsArray, Json}
 import play.api.mvc._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.BaseController
@@ -42,7 +42,7 @@ class BulkDownloadController @Inject()(sdesListFilesConnector: SdesListFilesConn
     Logger.debug(s"request headers from /list: ${request.headers.toSimpleMap}")
     Logger.debug(s"HeaderCarrier headers from /list: ${hc.headers}")
     sdesListFilesConnector.listAvailableFiles(fileType)(hc) map {
-      case Nil => Ok
+      case Nil => Ok(JsArray())
       case nonEmptyList => Ok(Json.toJson(nonEmptyList))
     } recover {
       case bre: uk.gov.hmrc.http.BadRequestException =>
