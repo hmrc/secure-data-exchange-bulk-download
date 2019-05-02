@@ -41,9 +41,17 @@ uses:
         200:
           body:
             application/json:
-              example 1: |
-                [
-                  { "filename": "xyz.xml.gz", "downloadURL": "https://some.sdes.domain?token=abc123", "fileSize": 1234 }
-                ]
-              example 2: |
-              []
+              examples:
+                example-1:
+                  description: |
+                    List the files of the given type that are available for download.
+                  value: |
+                    [
+                      { "filename": "xyz.xml.gz", "downloadURL": "https://some.sdes.domain?token=abc123", "fileSize": 1234 }
+                    ]
+                example-2:
+                  description: |
+                    No files available for download.
+                  value: |
+                    [ ]
+
