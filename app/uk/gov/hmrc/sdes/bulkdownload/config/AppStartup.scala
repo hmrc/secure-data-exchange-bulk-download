@@ -17,19 +17,6 @@
 package uk.gov.hmrc.sdes.bulkdownload.config
 
 import javax.inject.{Inject, Singleton}
-import play.api.Logger
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.sdes.bulkdownload.connectors.ServiceLocatorConnector
 
 @Singleton
-class AppStartup @Inject()(servicesConfig: SdesServicesConfig,
-                           serviceLocatorConnector: ServiceLocatorConnector) {
-
-  val registrationEnabled: Boolean = servicesConfig.getConfBool("service-locator.enabled", defBool = true)
-
-  if (registrationEnabled) {
-    Logger.info("Registering with the service locator.")
-    serviceLocatorConnector.register(HeaderCarrier())
-  }
-
-}
+class AppStartup @Inject()(servicesConfig: SdesServicesConfig)
