@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,15 +19,15 @@ package uk.gov.hmrc.sdes.bulkdownload.connectors
 import javax.inject.{Inject, Singleton}
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import uk.gov.hmrc.sdes.bulkdownload.config.SdesServicesConfig
 import uk.gov.hmrc.sdes.bulkdownload.model.FileItem
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 
 @Singleton
-class SdesListFilesConnector @Inject()(servicesConfig: SdesServicesConfig, http: HttpClient)
+class SdesListFilesConnector @Inject()(servicesConfig: ServicesConfig, http: HttpClient)
                                       (implicit ec: ExecutionContext) {
 
   lazy val serviceUrl: String = {

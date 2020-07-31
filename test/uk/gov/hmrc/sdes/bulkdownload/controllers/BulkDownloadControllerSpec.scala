@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,9 @@
 
 package uk.gov.hmrc.sdes.bulkdownload.controllers
 
-import org.mockito.Matchers.{eq => meq, _}
+import org.mockito.ArgumentMatchers.{eq => meq, _}
 import org.mockito.Mockito.{verify, when}
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.Status
 import play.api.libs.json.{JsArray, Json}
 import play.api.mvc.AnyContentAsEmpty
@@ -29,7 +29,7 @@ import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.sdes.bulkdownload.connectors.SdesListFilesConnector
 import uk.gov.hmrc.sdes.bulkdownload.model.FileItem
 
-import scala.concurrent.ExecutionContext.global
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 
@@ -38,7 +38,7 @@ class BulkDownloadControllerSpec extends UnitSpec with MockitoSugar {
   private trait Setup {
     val mockSdesListFilesConnector: SdesListFilesConnector = mock[SdesListFilesConnector]
 
-    val controller = new BulkDownloadController(mockSdesListFilesConnector)(global)
+    val controller = new BulkDownloadController(mockSdesListFilesConnector, stubControllerComponents())
 
     val fileType = "FILE_TYPE"
     val validRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withHeaders("X-Client-ID" -> "someId")
