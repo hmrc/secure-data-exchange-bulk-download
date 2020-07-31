@@ -7,9 +7,11 @@ val appName = "secure-data-exchange-bulk-download"
 
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin, SbtArtifactory)
+  .disablePlugins(sbt.plugins.JUnitXmlReportPlugin)
   .settings(
     libraryDependencies              ++= AppDependencies.compile ++ AppDependencies.test(),
-    evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false)
+    evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
+    scalaVersion := "2.12.10"
   )
   .settings(majorVersion := 0)
   .settings(

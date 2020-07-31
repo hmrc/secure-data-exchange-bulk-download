@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import play.api.Logger
 import play.api.libs.json.{JsArray, Json}
 import play.api.mvc._
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.controller.BaseController
+import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import uk.gov.hmrc.sdes.bulkdownload.connectors.SdesListFilesConnector
 
 import scala.concurrent.ExecutionContext
@@ -29,8 +29,8 @@ import scala.concurrent.Future
 import scala.util.control.NonFatal
 
 @Singleton()
-class BulkDownloadController @Inject()(sdesListFilesConnector: SdesListFilesConnector)
-                                      (implicit ec: ExecutionContext) extends BaseController {
+class BulkDownloadController @Inject()(sdesListFilesConnector: SdesListFilesConnector, cc: ControllerComponents)
+                                      (implicit ec: ExecutionContext) extends BackendController(cc) {
 
   private lazy val emptyHc = HeaderCarrier()
 
@@ -66,8 +66,11 @@ class BulkDownloadController @Inject()(sdesListFilesConnector: SdesListFilesConn
     }
   }
 
-  private object HavingClientIdHeader extends ActionBuilder[Request] with ActionFilter[Request] {
+  private object HavingClientIdHeader extends ActionBuilder[Request, AnyContent] with ActionFilter[Request] {
     val clientIdHeaderName = "X-Client-ID"
+
+    def executionContext: ExecutionContext = cc.executionContext
+    def parser: BodyParser[AnyContent] = cc.parsers.defaultBodyParser
 
     override protected def filter[A](request: Request[A]): Future[Option[Result]] = {
       val maybeError = request.headers.get(clientIdHeaderName) match {
