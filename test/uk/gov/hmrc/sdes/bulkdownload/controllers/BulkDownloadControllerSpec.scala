@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,7 @@
 
 package uk.gov.hmrc.sdes.bulkdownload.controllers
 
-import org.mockito.ArgumentMatchers.{eq => meq, _}
-import org.mockito.Mockito.{verify, when}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.{ArgumentMatchersSugar, MockitoSugar}
 import play.api.http.Status
 import play.api.libs.json.{JsArray, Json}
 import play.api.mvc.AnyContentAsEmpty
@@ -32,8 +30,7 @@ import uk.gov.hmrc.sdes.bulkdownload.model.FileItem
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-
-class BulkDownloadControllerSpec extends UnitSpec with MockitoSugar {
+class BulkDownloadControllerSpec extends UnitSpec with MockitoSugar with ArgumentMatchersSugar {
 
   private trait Setup {
     val mockSdesListFilesConnector: SdesListFilesConnector = mock[SdesListFilesConnector]
@@ -52,10 +49,10 @@ class BulkDownloadControllerSpec extends UnitSpec with MockitoSugar {
         .thenReturn(Future.successful(Nil))
 
       private val result = await(controller.list(fileType)(validRequest))
-      status(result) shouldBe Status.OK
+      status(result)        shouldBe Status.OK
       contentAsJson(result) shouldBe JsArray()
 
-      verify(mockSdesListFilesConnector).listAvailableFiles(meq(fileType))(any[HeaderCarrier])
+      verify(mockSdesListFilesConnector).listAvailableFiles(eqTo(fileType))(any[HeaderCarrier])
     }
 
     "return successful ok response with json data when listAvailableFiles returns valid data" in new Setup {
@@ -65,10 +62,10 @@ class BulkDownloadControllerSpec extends UnitSpec with MockitoSugar {
         .thenReturn(Future.successful(fileItems))
 
       private val result = await(controller.list(fileType)(validRequest))
-      status(result) shouldBe Status.OK
+      status(result)        shouldBe Status.OK
       contentAsJson(result) shouldBe Json.toJson(fileItems)
 
-      verify(mockSdesListFilesConnector).listAvailableFiles(meq(fileType))(any[HeaderCarrier])
+      verify(mockSdesListFilesConnector).listAvailableFiles(eqTo(fileType))(any[HeaderCarrier])
     }
 
     "intercept an exception from connector call" in new Setup {

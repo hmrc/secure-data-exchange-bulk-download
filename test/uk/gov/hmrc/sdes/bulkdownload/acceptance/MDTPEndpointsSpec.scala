@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,8 +28,7 @@ import scala.io.Source
 class MDTPEndpointsSpec extends PlaySpec with GuiceOneAppPerSuite {
 
   override implicit lazy val app: Application = GuiceApplicationBuilder()
-    .configure("microservice.services.service-locator.enabled" -> false,
-      "auditing.enabled" -> false)
+    .configure("microservice.services.service-locator.enabled" -> false, "auditing.enabled" -> false)
     .build()
 
   import app.materializer

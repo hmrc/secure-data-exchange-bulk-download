@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,16 +30,18 @@ import uk.gov.hmrc.sdes.bulkdownload.utils.wiremock.{MockSdesProxyListFilesEndpo
 class BulkDownloadListSpec extends PlaySpec with GuiceOneAppPerSuite with WireMockRunner with MockSdesProxyListFilesEndpoint {
 
   override implicit lazy val app: Application = GuiceApplicationBuilder()
-    .configure("microservice.services.service-locator.enabled" -> false,
-      "auditing.enabled" -> false,
-      "microservice.services.sdes-list-files.host" -> TestUtils.host,
-      "microservice.services.sdes-list-files.port" -> TestUtils.port)
+    .configure(
+      "microservice.services.service-locator.enabled" -> false,
+      "auditing.enabled"                              -> false,
+      "microservice.services.sdes-list-files.host"    -> TestUtils.host,
+      "microservice.services.sdes-list-files.port"    -> TestUtils.port
+    )
     .build()
 
   val headerNameClientId = "X-Client-ID"
-  val clientId = "some_Client_Id"
-  val fileType = "FILE_TYPE"
-  val endpoint = s"/list/$fileType"
+  val clientId           = "some_Client_Id"
+  val fileType           = "FILE_TYPE"
+  val endpoint           = s"/list/$fileType"
 
   val validRequest: FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest(Helpers.GET, endpoint).withHeaders(headerNameClientId -> clientId)
@@ -61,7 +63,7 @@ class BulkDownloadListSpec extends PlaySpec with GuiceOneAppPerSuite with WireMo
       "recognise incoming ClientId header in a case insensitive manner and pass it downstream" in {
         stubSdesProxyListFilesEndpoint(fileType)
 
-        val request = FakeRequest(Helpers.GET, endpoint).withHeaders(invertLettersCase(headerNameClientId) -> clientId)
+        val request      = FakeRequest(Helpers.GET, endpoint).withHeaders(invertLettersCase(headerNameClientId) -> clientId)
         val Some(result) = route(app, request)
 
         status(result) mustBe OK
@@ -75,7 +77,6 @@ class BulkDownloadListSpec extends PlaySpec with GuiceOneAppPerSuite with WireMo
         status(result) mustBe METHOD_NOT_ALLOWED
       }
     }
-
 
     "no files are found i.e. SDES proxy returns an empty array" should {
       "respond with 200 OK with empty list" in {

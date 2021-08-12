@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,9 @@ package uk.gov.hmrc.sdes.bulkdownload.controllers
 
 import javax.inject.{Inject, Singleton}
 import play.api.Logger
-import play.api.libs.json.{JsArray, Json}
+import play.api.libs.json.Json
 import play.api.mvc._
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, Upstream4xxResponse}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import uk.gov.hmrc.sdes.bulkdownload.connectors.SdesListFilesConnector
 
@@ -29,28 +29,28 @@ import scala.concurrent.Future
 import scala.util.control.NonFatal
 
 @Singleton()
-class BulkDownloadController @Inject()(sdesListFilesConnector: SdesListFilesConnector, cc: ControllerComponents)
-                                      (implicit ec: ExecutionContext) extends BackendController(cc) {
+class BulkDownloadController @Inject() (sdesListFilesConnector: SdesListFilesConnector, cc: ControllerComponents)(implicit ec: ExecutionContext)
+    extends BackendController(cc) {
 
   private lazy val emptyHc = HeaderCarrier()
 
-  def methodNotAllowed(fileType: String): Action[AnyContent] = Action { implicit request =>  MethodNotAllowed }
+  def methodNotAllowed(fileType: String): Action[AnyContent] = Action(MethodNotAllowed)
 
   def list(fileType: String): Action[AnyContent] = HavingClientIdHeader.async { implicit request =>
     val (hc, maybeClientId) = headerCarrierWithClientId
     lazy val clientId: String = maybeClientId.fold(ifEmpty = "N/A")(identity)
     Logger.debug(s"request headers from /list: ${request.headers.toSimpleMap}")
-    Logger.debug(s"HeaderCarrier headers from /list: ${hc.headers}")
-    sdesListFilesConnector.listAvailableFiles(fileType)(hc) map {
-      files => Ok(Json.toJson(files))
+    Logger.debug(s"HeaderCarrier headers from /list: ${hc.extraHeaders}")
+    sdesListFilesConnector.listAvailableFiles(fileType)(hc) map { files =>
+      Ok(Json.toJson(files))
     } recover {
-      case bre: uk.gov.hmrc.http.BadRequestException =>
-        Logger.error(s"Status BadRequest received when listing available files of type $fileType with client id $clientId: $bre")
+      case e4xx: Upstream4xxResponse if e4xx.upstreamResponseCode == BAD_REQUEST =>
+        Logger.error(s"Status BadRequest received when listing available files of type $fileType with client id $clientId: $e4xx")
         BadRequest
-      case e4xx: uk.gov.hmrc.http.Upstream4xxResponse if e4xx.upstreamResponseCode == UNAUTHORIZED =>
+      case e4xx: Upstream4xxResponse if e4xx.upstreamResponseCode == UNAUTHORIZED =>
         Logger.error(s"Status Unauthorized received when listing available files of type $fileType with client id $clientId: $e4xx")
         Unauthorized
-      case e4xx: uk.gov.hmrc.http.Upstream4xxResponse if e4xx.upstreamResponseCode == FORBIDDEN =>
+      case e4xx: Upstream4xxResponse if e4xx.upstreamResponseCode == FORBIDDEN =>
         Logger.error(s"Status Forbidden received when listing available files of type $fileType with client id $clientId: $e4xx")
         Forbidden
       case NonFatal(e) =>
@@ -69,8 +69,8 @@ class BulkDownloadController @Inject()(sdesListFilesConnector: SdesListFilesConn
   private object HavingClientIdHeader extends ActionBuilder[Request, AnyContent] with ActionFilter[Request] {
     val clientIdHeaderName = "X-Client-ID"
 
-    def executionContext: ExecutionContext = cc.executionContext
-    def parser: BodyParser[AnyContent] = cc.parsers.defaultBodyParser
+    def executionContext: ExecutionContext       = cc.executionContext
+    def parser:           BodyParser[AnyContent] = cc.parsers.defaultBodyParser
 
     override protected def filter[A](request: Request[A]): Future[Option[Result]] = {
       val maybeError = request.headers.get(clientIdHeaderName) match {

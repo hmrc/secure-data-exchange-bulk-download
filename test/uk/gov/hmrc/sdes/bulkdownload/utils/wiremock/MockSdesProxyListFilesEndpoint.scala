@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,24 +30,25 @@ trait MockSdesProxyListFilesEndpoint {
   private def mockEndpoint(fileType: String) = s"/files-available/list/$fileType"
 
   def stubSdesProxyListFilesEndpoint(fileType: String, status: Int = OK, responseBody: String = defaultListFilesResponseBody) {
-    stubFor(get(urlEqualTo(mockEndpoint(fileType)))
-      .willReturn(
-        aResponse()
-          .withStatus(status)
-          .withBody(responseBody)
-      )
+    stubFor(
+      get(urlEqualTo(mockEndpoint(fileType)))
+        .willReturn(
+          aResponse()
+            .withStatus(status)
+            .withBody(responseBody)
+        )
     )
   }
 
   def verifySdesProxyListFilesNotCalled(fileType: String): Unit = verify(0, getUrlRequestedFor(fileType))
 
   def verifySdesProxyListFilesCalled(fileType: String, clientIdHeader: String) {
-    verify(getUrlRequestedFor(fileType)
-      .withHeader("X-Client-ID", equalTo(clientIdHeader))
+    verify(
+      getUrlRequestedFor(fileType)
+        .withHeader("X-Client-ID", equalTo(clientIdHeader))
     )
   }
 
-  private def getUrlRequestedFor(fileType: String) = {
+  private def getUrlRequestedFor(fileType: String) =
     getRequestedFor(urlEqualTo(mockEndpoint(fileType)))
-  }
 }

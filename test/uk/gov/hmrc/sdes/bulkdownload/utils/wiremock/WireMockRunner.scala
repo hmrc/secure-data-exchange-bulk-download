@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import play.api.test.WsTestClient
 import uk.gov.hmrc.sdes.bulkdownload.utils.TestUtils
 
 trait WireMockManager {
-  lazy val wireMockPort: Int = TestUtils.port
+  lazy val wireMockPort: Int    = TestUtils.port
   lazy val wireMockHost: String = TestUtils.host
 
   lazy val wireMockUrl: String = TestUtils.url
@@ -63,7 +63,7 @@ trait WireMockRunner extends BeforeAndAfterEach with WireMockManager { self: Sui
 }
 
 object WireMockRunner extends WireMockManager {
-  def withWireMockServer[T](func: WSClient => T): T = {
+  def withWireMockServer[T](func: WSClient => T): T =
     try {
       WireMockManager.startMockServer()
       WireMockManager.resetMockServer()
@@ -71,7 +71,6 @@ object WireMockRunner extends WireMockManager {
     } finally {
       WireMockManager.stopMockServer()
     }
-  }
 
   def withWireMockServer[T](block: => T): T = withWireMockServer(_ => block)
 }
