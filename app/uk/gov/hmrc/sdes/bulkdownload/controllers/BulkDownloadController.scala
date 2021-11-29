@@ -17,7 +17,7 @@
 package uk.gov.hmrc.sdes.bulkdownload.controllers
 
 import javax.inject.{Inject, Singleton}
-import play.api.Logger
+import play.api.Logging
 import play.api.libs.json.Json
 import play.api.mvc._
 import uk.gov.hmrc.http.{HeaderCarrier, Upstream4xxResponse}
@@ -30,7 +30,8 @@ import scala.util.control.NonFatal
 
 @Singleton()
 class BulkDownloadController @Inject() (sdesListFilesConnector: SdesListFilesConnector, cc: ControllerComponents)(implicit ec: ExecutionContext)
-    extends BackendController(cc) {
+    extends BackendController(cc)
+    with Logging {
 
   private lazy val emptyHc = HeaderCarrier()
 
@@ -39,22 +40,22 @@ class BulkDownloadController @Inject() (sdesListFilesConnector: SdesListFilesCon
   def list(fileType: String): Action[AnyContent] = HavingClientIdHeader.async { implicit request =>
     val (hc, maybeClientId) = headerCarrierWithClientId
     lazy val clientId: String = maybeClientId.fold(ifEmpty = "N/A")(identity)
-    Logger.debug(s"request headers from /list: ${request.headers.toSimpleMap}")
-    Logger.debug(s"HeaderCarrier headers from /list: ${hc.extraHeaders}")
+    logger.debug(s"request headers from /list: ${request.headers.toSimpleMap}")
+    logger.debug(s"HeaderCarrier headers from /list: ${hc.extraHeaders}")
     sdesListFilesConnector.listAvailableFiles(fileType)(hc) map { files =>
       Ok(Json.toJson(files))
     } recover {
       case e4xx: Upstream4xxResponse if e4xx.upstreamResponseCode == BAD_REQUEST =>
-        Logger.error(s"Status BadRequest received when listing available files of type $fileType with client id $clientId: $e4xx")
+        logger.error(s"Status BadRequest received when listing available files of type $fileType with client id $clientId: $e4xx")
         BadRequest
       case e4xx: Upstream4xxResponse if e4xx.upstreamResponseCode == UNAUTHORIZED =>
-        Logger.error(s"Status Unauthorized received when listing available files of type $fileType with client id $clientId: $e4xx")
+        logger.error(s"Status Unauthorized received when listing available files of type $fileType with client id $clientId: $e4xx")
         Unauthorized
       case e4xx: Upstream4xxResponse if e4xx.upstreamResponseCode == FORBIDDEN =>
-        Logger.error(s"Status Forbidden received when listing available files of type $fileType with client id $clientId: $e4xx")
+        logger.error(s"Status Forbidden received when listing available files of type $fileType with client id $clientId: $e4xx")
         Forbidden
       case NonFatal(e) =>
-        Logger.error(s"Could not list available files of type $fileType with client id $clientId: $e", e)
+        logger.error(s"Could not list available files of type $fileType with client id $clientId: $e", e)
         InternalServerError
     }
   }
@@ -75,10 +76,10 @@ class BulkDownloadController @Inject() (sdesListFilesConnector: SdesListFilesCon
     override protected def filter[A](request: Request[A]): Future[Option[Result]] = {
       val maybeError = request.headers.get(clientIdHeaderName) match {
         case None =>
-          Logger.error(s"Header '$clientIdHeaderName' not found in request.")
+          logger.error(s"Header '$clientIdHeaderName' not found in request.")
           Some(Unauthorized)
         case Some(blank) if blank.trim.isEmpty =>
-          Logger.error(s"Request header '$clientIdHeaderName' has a blank value '$blank'.")
+          logger.error(s"Request header '$clientIdHeaderName' has a blank value '$blank'.")
           Some(Unauthorized)
         case _ => None
       }
