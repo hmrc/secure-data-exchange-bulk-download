@@ -11,8 +11,9 @@ lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
   .disablePlugins(sbt.plugins.JUnitXmlReportPlugin)
   .settings(
-    libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test(),
-    evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
+    resolvers += Resolver.jcenterRepo,
+    libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
+    update / evictionWarningOptions := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
     scalaVersion := "2.12.11",
     // ***************
     // Use the silencer plugin to suppress warnings
@@ -30,32 +31,32 @@ lazy val microservice = Project(appName, file("."))
   .configs(IntegrationTest)
   .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
   .settings(
-    Keys.fork in IntegrationTest := false,
-    unmanagedSourceDirectories in IntegrationTest := (baseDirectory in IntegrationTest)(base => Seq(base / "it")).value,
-    testGrouping in IntegrationTest := oneForkedJvmPerTest((definedTests in IntegrationTest).value),
-    parallelExecution in IntegrationTest := false,
-    parallelExecution in Test := false,
+    IntegrationTest / Keys.fork := false,
+    IntegrationTest / unmanagedSourceDirectories := (IntegrationTest / baseDirectory)(base => Seq(base / "it")).value,
+    IntegrationTest / testGrouping := oneForkedJvmPerTest((IntegrationTest / definedTests).value),
+    IntegrationTest / parallelExecution := false,
+    Test / parallelExecution := false,
     addTestReportOption(IntegrationTest, "int-test-reports"),
     scoverageSettings
   )
-  .settings(
-    resolvers += Resolver.jcenterRepo
-  )
+  .settings(scoverageSettings)
+  .settings(scalastyleSettings)
+  .settings(scalafmtSettings)
 
-val scoverageSettings: Seq[Setting[_]] = Seq(
-  coverageExcludedPackages := List(
-        "<empty>",
-        "Reverse.*",
-        ".*(BuildInfo|Routes).*"
-      ).mkString(";"),
+lazy val scoverageSettings: Seq[Setting[_]] = Seq(
+  coverageExcludedPackages := """"<empty>"; .*(BuildInfo|Routes|Reverse).*""",
   coverageMinimum := 95,
   coverageFailOnMinimum := true,
   coverageHighlighting := true
 )
 
-scalastyleConfig := baseDirectory.value / "scalastyle-config.xml"
+lazy val scalastyleSettings = Seq(
+  scalastyleConfig := baseDirectory.value / "scalastyle-config.xml"
+)
 
-Compile / compile := (Compile / compile)
-  .dependsOn(Compile / scalafmtSbt)
-  .dependsOn(scalafmtAll)
-  .value
+lazy val scalafmtSettings = Seq(
+  Compile / compile := (Compile / compile)
+        .dependsOn(Compile / scalafmtSbt)
+        .dependsOn(scalafmtAll)
+        .value
+)

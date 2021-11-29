@@ -5,18 +5,14 @@ import sbt._
 object AppDependencies {
 
   val compile = Seq(
-    ws,
-    "uk.gov.hmrc" %% "bootstrap-backend-play-26" % "5.10.0"
+    "uk.gov.hmrc" %% "bootstrap-backend-play-28" % "5.16.0"
   )
 
-  def test(scope: String = "test") = Seq(
-    "uk.gov.hmrc"            %% "hmrctest"           % "3.9.0-play-26" % scope,
-    "org.scalatest"          %% "scalatest"          % "3.0.8"         % scope,
-    "org.pegdown"            % "pegdown"             % "1.6.0"         % scope,
-    "com.typesafe.play"      %% "play-test"          % current         % scope,
-    "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.3"         % scope,
-    "org.mockito"            %% "mockito-scala"      % "1.16.37"       % scope,
-    "com.github.tomakehurst" % "wiremock-jre8"       % "2.27.1"        % scope
+  val test = Seq(
+    "uk.gov.hmrc"       %% "bootstrap-test-play-28" % "5.16.0"  % Test,
+    "org.pegdown"       % "pegdown"                 % "1.6.0"   % Test,
+    "com.typesafe.play" %% "play-test"              % current   % Test,
+    "org.mockito"       %% "mockito-scala"          % "1.16.37" % Test
   )
 
 }

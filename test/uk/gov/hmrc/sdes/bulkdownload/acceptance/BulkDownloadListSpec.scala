@@ -33,6 +33,7 @@ class BulkDownloadListSpec extends PlaySpec with GuiceOneAppPerSuite with WireMo
     .configure(
       "microservice.services.service-locator.enabled" -> false,
       "auditing.enabled"                              -> false,
+      "metrics.enabled"                               -> false,
       "microservice.services.sdes-list-files.host"    -> TestUtils.host,
       "microservice.services.sdes-list-files.port"    -> TestUtils.port
     )
