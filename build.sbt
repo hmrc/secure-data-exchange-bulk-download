@@ -5,8 +5,6 @@ import org.scalastyle.sbt.ScalastylePlugin._
 
 val appName = "secure-data-exchange-bulk-download"
 
-val silencerVersion = "1.7.0"
-
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
   .disablePlugins(sbt.plugins.JUnitXmlReportPlugin)
@@ -14,15 +12,8 @@ lazy val microservice = Project(appName, file("."))
     resolvers += Resolver.jcenterRepo,
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
     update / evictionWarningOptions := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
-    scalaVersion := "2.12.11",
-    // ***************
-    // Use the silencer plugin to suppress warnings
-    scalacOptions += "-P:silencer:pathFilters=views;routes",
-    libraryDependencies ++= Seq(
-          compilerPlugin("com.github.ghik" % "silencer-plugin" % silencerVersion cross CrossVersion.full),
-          "com.github.ghik" % "silencer-lib" % silencerVersion % Provided cross CrossVersion.full
-        )
-    // ***************
+    scalaVersion := "2.12.15",
+    scalacOptions ++= Seq("-Xlint", "-Wconf:src=target/.*:s", "-feature")
   )
   .settings(majorVersion := 0)
   .settings(
@@ -42,12 +33,17 @@ lazy val microservice = Project(appName, file("."))
   .settings(scoverageSettings)
   .settings(scalastyleSettings)
   .settings(scalafmtSettings)
+  .settings( // command aliases for use in sbt
+    addCommandAlias("test-with-coverage", ";clean;compile;coverage;test;coverageReport;coverageOff")
+  )
 
 lazy val scoverageSettings: Seq[Setting[_]] = Seq(
   coverageExcludedPackages := """"<empty>"; .*(BuildInfo|Routes|Reverse).*""",
-  coverageMinimum := 95,
+  coverageMinimumStmtTotal := 95,
   coverageFailOnMinimum := true,
-  coverageHighlighting := true
+  coverageHighlighting := true,
+  Test / compile / coverageEnabled := true,
+  Compile / compile / coverageEnabled := false
 )
 
 lazy val scalastyleSettings = Seq(
