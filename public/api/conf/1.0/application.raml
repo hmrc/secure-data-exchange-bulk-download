@@ -39,7 +39,7 @@ uses:
       description: |
         List the files of the given type that are available for download.
       is: [headers.acceptHeader]
-      (annotations.scope): "write:list-files"
+      (annotations.scope): "read:bulk-data-download-list"
       securedBy: [ sec.x-application ]
       responses:
         200:

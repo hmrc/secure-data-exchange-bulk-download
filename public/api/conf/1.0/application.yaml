@@ -33,7 +33,7 @@ paths:
         - $ref: '#/components/parameters/header_Authorization'
       security:
         - applicationRestricted:
-            - write:list-files
+            - read:bulk-data-download-list
     parameters:
       - name: fileType
         in: path
@@ -84,4 +84,4 @@ components:
         clientCredentials:
           tokenUrl: https://api.service.hmrc.gov.uk/oauth/token
           scopes:
-            write:list-files: Grants the ability to list files available for download
+            read:bulk-data-download-list: Grants the ability to list files available for download
