@@ -24,6 +24,7 @@ paths:
                 - filename: file2.xml.gz
                   downloadURL: https://some.sdes.domain/file2.xml.gz
                   fileSize: 4321
+      summary: List available files
       description: |
         List the files of the given type that are available for download.
       operationId: List available files
