@@ -39,6 +39,7 @@ uses:
       description: |
         List the files of the given type that are available for download.
       is: [headers.acceptHeader]
+      (annotations.scope): "read:list-files"
       securedBy: [ sec.x-application ]
       responses:
         200:
