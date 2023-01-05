@@ -31,7 +31,8 @@ paths:
         - $ref: '#/components/parameters/header_Accept'
         - $ref: '#/components/parameters/header_Authorization'
       security:
-        - applicationRestricted: []
+        - applicationRestricted:
+            - list-files
     parameters:
       - name: fileType
         in: path
@@ -81,4 +82,5 @@ components:
       flows:
         clientCredentials:
           tokenUrl: https://api.service.hmrc.gov.uk/oauth/token
-          scopes: {}
+          scopes:
+            list-files: Grants the ability to list files available for download
