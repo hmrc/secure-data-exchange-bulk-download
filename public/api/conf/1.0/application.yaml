@@ -1,0 +1,87 @@
+openapi: 3.0.0
+info:
+  title: Bulk Data File List
+  version: "1.0"
+servers:
+  - url: https://test-api.service.hmrc.gov.uk/bulk-data-download
+    description: Sandbox
+  - url: https://api.service.hmrc.gov.uk/bulk-data-download
+    description: Production
+paths:
+  /list/{fileType}:
+    get:
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/response"
+              example:
+                - filename: file1.xml.gz
+                  downloadURL: https://some.sdes.domain/file1.xml.gz
+                  fileSize: 1234
+                - filename: file2.xml.gz
+                  downloadURL: https://some.sdes.domain/file2.xml.gz
+                  fileSize: 4321
+      summary: List available files
+      description: |
+        List the files of the given type that are available for download.
+      operationId: List available files
+      parameters:
+        - $ref: '#/components/parameters/header_Accept'
+        - $ref: '#/components/parameters/header_Authorization'
+      security:
+        - applicationRestricted:
+            - read:bulk-data-download-list
+    parameters:
+      - name: fileType
+        in: path
+        required: true
+        schema:
+          type: string
+        description: A type of the information files to download e.g. `TARIFF-DAILY`, `TARIFF-MONTHLY`, `TARIFF-ANNUAL`.
+components:
+  schemas:
+    response:
+        type: object
+        properties:
+          filename:
+            type: string
+            description: The name of the file.
+          downloadURL:
+            type: string
+            description: The URL to download the file.
+          fileSize:
+            type: integer
+            description: The size of the file in bytes.
+  responses: {}
+  parameters:
+    header_Accept:
+      name: Accept
+      in: header
+      required: true
+      description: Specifies the response format and the [version](/api-documentation/docs/reference-guide#versioning) of the API to be used.
+      schema:
+        type: string
+        example: application/vnd.hmrc.1.0+json
+    header_Authorization:
+      name: Authorization
+      in: header
+      required: true
+      description: An [OAuth 2.0 Bearer Token](http://localhost:9680/api-documentation/docs/authorisation/application-restricted-endpoints) with the write:transfer-complete scope.
+      schema:
+        type: string
+        example: Bearer 59fc92c1cdf0b8ef1f138a702effdbd2
+  examples: {}
+  securitySchemes:
+    applicationRestricted:
+      type: oauth2
+      description: |
+        HMRC supports OAuth 2.0 for authenticating application restricted API requests using an OAuth 2.0 Bearer Token in the AUTHORIZATION header.
+        See https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints for details.
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.service.hmrc.gov.uk/oauth/token
+          scopes:
+            read:bulk-data-download-list: Grants the ability to list files available for download
