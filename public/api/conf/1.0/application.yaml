@@ -69,7 +69,7 @@ components:
       name: Authorization
       in: header
       required: true
-      description: An [OAuth 2.0 Bearer Token](http://localhost:9680/api-documentation/docs/authorisation/application-restricted-endpoints) with the write:transfer-complete scope.
+      description: An [OAuth 2.0 Bearer Token](http://localhost:9680/api-documentation/docs/authorisation/application-restricted-endpoints) with the read:bulk-data-download-list scope.
       schema:
         type: string
         example: Bearer 59fc92c1cdf0b8ef1f138a702effdbd2
