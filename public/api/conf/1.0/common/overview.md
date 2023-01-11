@@ -1,0 +1,1 @@
+The API lists the bulk data files available to download for a specific information type. For each file in list there will be a URL to download the file.
