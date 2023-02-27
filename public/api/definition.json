@@ -1,11 +1,5 @@
 {
-  "scopes": [
-    {
-      "key": "read:bulk-data-download-list",
-      "name": "List Available Files",
-      "description": "List files available for download from SDES"
-    }
-  ],
+  "scopes": [],
   "api": {
     "name": "Bulk Data File List",
     "description": "An API informing about files available for download from Secure Data Exchange Services.",
