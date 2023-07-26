@@ -1,6 +1,5 @@
 import TestPhases.oneForkedJvmPerTest
 import uk.gov.hmrc.DefaultBuildSettings.addTestReportOption
-import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 import org.scalastyle.sbt.ScalastylePlugin._
 
 val appName = "secure-data-exchange-bulk-download"
@@ -16,9 +15,6 @@ lazy val microservice = Project(appName, file("."))
     scalacOptions ++= Seq("-Xlint", "-Wconf:src=target/.*:s", "-feature")
   )
   .settings(majorVersion := 0)
-  .settings(
-    publishingSettings: _*
-  )
   .configs(IntegrationTest)
   .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
   .settings(
