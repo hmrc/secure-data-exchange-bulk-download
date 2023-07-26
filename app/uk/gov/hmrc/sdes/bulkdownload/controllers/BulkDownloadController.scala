@@ -16,16 +16,15 @@
 
 package uk.gov.hmrc.sdes.bulkdownload.controllers
 
-import javax.inject.{Inject, Singleton}
 import play.api.Logging
 import play.api.libs.json.Json
 import play.api.mvc._
-import uk.gov.hmrc.http.{HeaderCarrier, Upstream4xxResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import uk.gov.hmrc.sdes.bulkdownload.connectors.SdesListFilesConnector
 
-import scala.concurrent.ExecutionContext
-import scala.concurrent.Future
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
 
 @Singleton()
@@ -45,14 +44,14 @@ class BulkDownloadController @Inject() (sdesListFilesConnector: SdesListFilesCon
     sdesListFilesConnector.listAvailableFiles(fileType)(hc) map { files =>
       Ok(Json.toJson(files))
     } recover {
-      case e4xx: Upstream4xxResponse if e4xx.upstreamResponseCode == BAD_REQUEST =>
-        logger.error(s"Status BadRequest received when listing available files of type $fileType with client id $clientId: $e4xx")
+      case resp: UpstreamErrorResponse if resp.statusCode == BAD_REQUEST =>
+        logger.error(s"Status BadRequest received when listing available files of type $fileType with client id $clientId: $resp")
         BadRequest
-      case e4xx: Upstream4xxResponse if e4xx.upstreamResponseCode == UNAUTHORIZED =>
-        logger.error(s"Status Unauthorized received when listing available files of type $fileType with client id $clientId: $e4xx")
+      case resp: UpstreamErrorResponse if resp.statusCode == UNAUTHORIZED =>
+        logger.error(s"Status Unauthorized received when listing available files of type $fileType with client id $clientId: $resp")
         Unauthorized
-      case e4xx: Upstream4xxResponse if e4xx.upstreamResponseCode == FORBIDDEN =>
-        logger.error(s"Status Forbidden received when listing available files of type $fileType with client id $clientId: $e4xx")
+      case resp: UpstreamErrorResponse if resp.statusCode == FORBIDDEN =>
+        logger.error(s"Status Forbidden received when listing available files of type $fileType with client id $clientId: $resp")
         Forbidden
       case NonFatal(e) =>
         logger.error(s"Could not list available files of type $fileType with client id $clientId: $e", e)

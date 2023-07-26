@@ -29,7 +29,7 @@ trait MockSdesProxyListFilesEndpoint {
 
   private def mockEndpoint(fileType: String) = s"/files-available/list/$fileType"
 
-  def stubSdesProxyListFilesEndpoint(fileType: String, status: Int = OK, responseBody: String = defaultListFilesResponseBody) {
+  def stubSdesProxyListFilesEndpoint(fileType: String, status: Int = OK, responseBody: String = defaultListFilesResponseBody): Unit =
     stubFor(
       get(urlEqualTo(mockEndpoint(fileType)))
         .willReturn(
@@ -38,16 +38,14 @@ trait MockSdesProxyListFilesEndpoint {
             .withBody(responseBody)
         )
     )
-  }
 
   def verifySdesProxyListFilesNotCalled(fileType: String): Unit = verify(0, getUrlRequestedFor(fileType))
 
-  def verifySdesProxyListFilesCalled(fileType: String, clientIdHeader: String) {
+  def verifySdesProxyListFilesCalled(fileType: String, clientIdHeader: String): Unit =
     verify(
       getUrlRequestedFor(fileType)
         .withHeader("X-Client-ID", equalTo(clientIdHeader))
     )
-  }
 
   private def getUrlRequestedFor(fileType: String) =
     getRequestedFor(urlEqualTo(mockEndpoint(fileType)))
