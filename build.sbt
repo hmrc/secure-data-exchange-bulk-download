@@ -12,7 +12,7 @@ lazy val microservice = Project(appName, file("."))
     resolvers += Resolver.jcenterRepo,
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
     update / evictionWarningOptions := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
-    scalaVersion := "2.12.15",
+    scalaVersion := "2.13.8",
     scalacOptions ++= Seq("-Xlint", "-Wconf:src=target/.*:s", "-feature")
   )
   .settings(majorVersion := 0)
