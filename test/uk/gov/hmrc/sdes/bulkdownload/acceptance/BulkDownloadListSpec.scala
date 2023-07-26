@@ -54,7 +54,7 @@ class BulkDownloadListSpec extends PlaySpec with GuiceOneAppPerSuite with WireMo
       "call SDES proxy with ClientId header and file type, passing back the response" in {
         stubSdesProxyListFilesEndpoint(fileType)
 
-        val Some(result) = route(app, validRequest)
+        val result = route(app, validRequest).get
 
         status(result) mustBe OK
         contentAsJson(result) mustBe expectedResponse
@@ -64,8 +64,8 @@ class BulkDownloadListSpec extends PlaySpec with GuiceOneAppPerSuite with WireMo
       "recognise incoming ClientId header in a case insensitive manner and pass it downstream" in {
         stubSdesProxyListFilesEndpoint(fileType)
 
-        val request      = FakeRequest(Helpers.GET, endpoint).withHeaders(invertLettersCase(headerNameClientId) -> clientId)
-        val Some(result) = route(app, request)
+        val request = FakeRequest(Helpers.GET, endpoint).withHeaders(invertLettersCase(headerNameClientId) -> clientId)
+        val result  = route(app, request).get
 
         status(result) mustBe OK
         verifySdesProxyListFilesCalled(fileType, clientId)
@@ -74,7 +74,7 @@ class BulkDownloadListSpec extends PlaySpec with GuiceOneAppPerSuite with WireMo
 
     "Invalid POST Request" should {
       "respond with 405 MethodNotAllowed" in {
-        val Some(result) = route(app, FakeRequest(Helpers.POST, endpoint))
+        val result = route(app, FakeRequest(Helpers.POST, endpoint)).get
         status(result) mustBe METHOD_NOT_ALLOWED
       }
     }
@@ -83,7 +83,7 @@ class BulkDownloadListSpec extends PlaySpec with GuiceOneAppPerSuite with WireMo
       "respond with 200 OK with empty list" in {
         stubSdesProxyListFilesEndpoint(fileType, responseBody = Json.stringify(JsArray()))
 
-        val Some(result) = route(app, validRequest)
+        val result = route(app, validRequest).get
 
         status(result) mustBe OK
         contentAsJson(result) mustBe JsArray()
@@ -110,7 +110,7 @@ class BulkDownloadListSpec extends PlaySpec with GuiceOneAppPerSuite with WireMo
 
     s"$headerNameClientId header is not provided in request" should {
       "respond with 401 Unauthorized without calling SDES proxy" in {
-        val Some(result) = route(app, FakeRequest(Helpers.GET, endpoint))
+        val result = route(app, FakeRequest(Helpers.GET, endpoint)).get
 
         status(result) mustBe UNAUTHORIZED
         verifySdesProxyListFilesNotCalled(fileType)
@@ -119,7 +119,7 @@ class BulkDownloadListSpec extends PlaySpec with GuiceOneAppPerSuite with WireMo
 
     s"$headerNameClientId header has a blank value" should {
       "respond with 401 Unauthorized without calling SDES proxy" in {
-        val Some(result) = route(app, FakeRequest(Helpers.GET, endpoint).withHeaders(headerNameClientId -> "   "))
+        val result = route(app, FakeRequest(Helpers.GET, endpoint).withHeaders(headerNameClientId -> "   ")).get
 
         status(result) mustBe UNAUTHORIZED
         verifySdesProxyListFilesNotCalled(fileType)
@@ -130,7 +130,7 @@ class BulkDownloadListSpec extends PlaySpec with GuiceOneAppPerSuite with WireMo
   private def verifyErroneousProxyResponseStatusPropagated(statusCode: Int) = {
     stubSdesProxyListFilesEndpoint(fileType, statusCode, responseBody = "")
 
-    val Some(result) = route(app, validRequest)
+    val result = route(app, validRequest).get
 
     status(result) mustBe statusCode
   }
