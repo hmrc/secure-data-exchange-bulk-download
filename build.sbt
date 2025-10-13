@@ -1,6 +1,4 @@
-import TestPhases.oneForkedJvmPerTest
 import uk.gov.hmrc.DefaultBuildSettings.addTestReportOption
-import org.scalastyle.sbt.ScalastylePlugin._
 
 val appName = "secure-data-exchange-bulk-download"
 
@@ -8,10 +6,9 @@ lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
   .disablePlugins(sbt.plugins.JUnitXmlReportPlugin)
   .settings(
-    resolvers += Resolver.jcenterRepo,
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
     update / evictionWarningOptions := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
-    scalaVersion := "2.13.12",
+    scalaVersion := "2.13.16",
     scalacOptions ++= Seq("-Xlint", "-Wconf:src=target/.*:s", "-feature")
   )
   .settings(majorVersion := 0)
@@ -20,7 +17,6 @@ lazy val microservice = Project(appName, file("."))
   .settings(
     IntegrationTest / Keys.fork := false,
     IntegrationTest / unmanagedSourceDirectories := (IntegrationTest / baseDirectory)(base => Seq(base / "it")).value,
-    IntegrationTest / testGrouping := oneForkedJvmPerTest((IntegrationTest / definedTests).value),
     IntegrationTest / parallelExecution := false,
     Test / parallelExecution := false,
     addTestReportOption(IntegrationTest, "int-test-reports"),
