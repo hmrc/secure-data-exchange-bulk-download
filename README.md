@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/hmrc/secure-data-exchange-bulk-download.svg)](https://travis-ci.org/hmrc/secure-data-exchange-bulk-download) [ ![Download](https://api.bintray.com/packages/hmrc/releases/secure-data-exchange-bulk-download/images/download.svg) ](https://bintray.com/hmrc/releases/secure-data-exchange-bulk-download/_latestVersion)
 
-This is a placeholder README.md for a new repository
+An API which lists files available for download from Secure Data Exchange Services
 
 ### License
 
