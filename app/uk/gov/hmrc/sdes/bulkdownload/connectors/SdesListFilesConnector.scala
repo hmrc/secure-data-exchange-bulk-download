@@ -18,8 +18,10 @@ package uk.gov.hmrc.sdes.bulkdownload.connectors
 
 import javax.inject.{Inject, Singleton}
 import play.api.Logging
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http._
+import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.sdes.bulkdownload.model.FileItem
 
@@ -27,7 +29,7 @@ import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 
 @Singleton
-class SdesListFilesConnector @Inject() (servicesConfig: ServicesConfig, http: HttpClient)(implicit ec: ExecutionContext) extends Logging {
+class SdesListFilesConnector @Inject() (servicesConfig: ServicesConfig, http: HttpClientV2)(implicit ec: ExecutionContext) extends Logging {
 
   lazy val serviceUrl: String = {
     val serviceKey = "sdes-list-files"
@@ -41,7 +43,7 @@ class SdesListFilesConnector @Inject() (servicesConfig: ServicesConfig, http: Ht
     logger.debug(s"HeaderCarrier headers from listAvailableFiles: ${hc.extraHeaders}")
     logger.debug(s"HeaderCarrier other headers from listAvailableFiles: ${hc.otherHeaders}")
     val url = s"$serviceUrl/$fileType"
-    http.GET[List[FileItem]](url)
+    http.get(url"$url").execute[List[FileItem]]
   }
 
 }
